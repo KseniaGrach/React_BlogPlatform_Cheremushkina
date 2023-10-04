@@ -12,6 +12,8 @@ import RequireAuth from './RequireAuth';
 import NotFound from '../pages/NotFound';
 import Layout from './Layout';
 import SingleArticle from '../pages/SingleArticle';
+import CreateArticle from '../pages/CreateArticle';
+import EditArticle from '../pages/EditArticle';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,6 +35,22 @@ const App = () => {
           element={
             <RequireAuth>
               <EditProfile />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="new-article"
+          element={
+            <RequireAuth>
+              <CreateArticle />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="articles/:slug/edit"
+          element={
+            <RequireAuth>
+              <EditArticle />
             </RequireAuth>
           }
         />

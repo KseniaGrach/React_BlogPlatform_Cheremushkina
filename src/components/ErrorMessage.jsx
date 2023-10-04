@@ -25,7 +25,7 @@ const ErrorMessage = ({ serverError }) => {
     <div>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert severity="error" sx={{ width: '100%' }}>
-          Ошибка: &quot;{JSON.stringify(serverError.errors.errors) ?? JSON.stringify(serverError)}&quot;
+          Ошибка: &quot;{JSON.stringify(serverError.errors?.errors) ?? JSON.stringify(serverError)}&quot;
         </Alert>
       </Snackbar>
     </div>

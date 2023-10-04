@@ -6,10 +6,16 @@ import { useSelector } from 'react-redux';
 // eslint-disable-next-line react/prop-types
 const RequireAuth = ({ children }) => {
   const location = useLocation();
-  const auth = useSelector((state) => state.user.email);
-  if (!auth) {
-    return <Navigate to="/sign-in" state={{ from: location }} />;
-  }
+
+  const user = useSelector((state) => state.user.email);
+
+  // eslint-disable-next-line consistent-return
+  setTimeout(() => {
+    if (!user) {
+      return <Navigate to="/sign-in" state={{ from: location }} />;
+    }
+  }, 1000);
+
   return children;
 };
 
