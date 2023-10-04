@@ -91,6 +91,44 @@ export const deleteArticle = createAsyncThunk('articles/delete', async (slug, { 
     .catch((error) => rejectWithValue({ status: error.status, statusText: error.message }))
 );
 
+export const setAsFavorite = createAsyncThunk('articles/setAsFavorite', async (slug, { rejectWithValue }) =>
+  fetch(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${getCookie('token')}`,
+    },
+  })
+    .then(async (response) =>
+      response.ok
+        ? response.json()
+        : rejectWithValue({
+            status: response.status,
+            errors: await response.json(),
+          })
+    )
+    .catch((error) => rejectWithValue({ status: error.status, statusText: error.message }))
+);
+
+export const removeAsFavorite = createAsyncThunk('articles/removeAsFavorite', async (slug, { rejectWithValue }) =>
+  fetch(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${getCookie('token')}`,
+    },
+  })
+    .then(async (response) =>
+      response.ok
+        ? response.json()
+        : rejectWithValue({
+            status: response.status,
+            errors: await response.json(),
+          })
+    )
+    .catch((error) => rejectWithValue({ status: error.status, statusText: error.message }))
+);
+
 const articles = createSlice({
   name: 'articles',
   initialState: {
@@ -157,6 +195,14 @@ const articles = createSlice({
       state.requestStatus = 'fulfilled';
     });
 
+    builder.addCase(setAsFavorite.fulfilled, (state) => {
+      state.requestStatus = 'fulfilled';
+    });
+
+    builder.addCase(removeAsFavorite.fulfilled, (state) => {
+      state.requestStatus = 'fulfilled';
+    });
+
     builder.addCase(getArticles.rejected, (state, action) => {
       state.requestStatus = 'rejected';
       state.apiError = action.payload;
@@ -178,6 +224,16 @@ const articles = createSlice({
     });
 
     builder.addCase(deleteArticle.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.apiError = action.payload;
+    });
+
+    builder.addCase(setAsFavorite.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.apiError = action.payload;
+    });
+
+    builder.addCase(removeAsFavorite.rejected, (state, action) => {
       state.requestStatus = 'rejected';
       state.apiError = action.payload;
     });

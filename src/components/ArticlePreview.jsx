@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Box, Button, Checkbox, Chip, Grid, Typography } from '@mui/material';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
-import { deleteArticle } from '../store/articles';
+import { deleteArticle, removeAsFavorite, setAsFavorite } from '../store/articles';
 
 import ConfirmDeleteArticle from './ConfirmDeleteArticle';
 import formatTime from '../utils/formatTime';
@@ -22,12 +22,26 @@ const ArticlePreview = (props) => {
   const userLoggedIn = useSelector((state) => state.user.username);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [checkFavorite, setCheckFavorite] = useState(article?.favorited || false);
+  const [favoriteCount, setFavoriteCount] = useState(article.favoritesCount);
 
   const articleCreator = article.author.username;
 
   const closeModal = () => setModalIsOpen(false);
 
   const openModal = () => setModalIsOpen(true);
+
+  const handleCheckboxClick = (event) => {
+    if (event.target.checked) {
+      dispatch(setAsFavorite(article.slug));
+      setCheckFavorite(true);
+      setFavoriteCount(favoriteCount + 1);
+    } else {
+      dispatch(removeAsFavorite(article.slug));
+      setCheckFavorite(false);
+      setFavoriteCount(favoriteCount - 1);
+    }
+  };
 
   const removeArticle = () => {
     dispatch(deleteArticle(article.slug));
@@ -53,8 +67,14 @@ const ArticlePreview = (props) => {
                 {article.title}
               </Typography>
             )}
-            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: 'red' }} />} disabled />
-            <Typography sx={{ mr: '5px' }}>{article.favoritesCount}</Typography>
+            <Checkbox
+              icon={<FavoriteBorder />}
+              checkedIcon={<Favorite sx={{ color: 'red' }} />}
+              disabled={!userLoggedIn}
+              checked={checkFavorite}
+              onClick={(event) => handleCheckboxClick(event)}
+            />
+            <Typography sx={{ mr: '5px' }}>{favoriteCount}</Typography>
           </Grid>
           {article.tagList.map(
             (tag) =>
