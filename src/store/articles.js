@@ -4,7 +4,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const getArticles = createAsyncThunk('articles/getAll', async ({ limit, offset }, { rejectWithValue }) =>
   fetch(`https://blog.kata.academy/api/articles?${new URLSearchParams({ limit, offset })}`)
     .then(async (response) =>
-      response.ok ? response.json() : rejectWithValue({ status: response.status, statusText: response.json() })
+      response.ok
+        ? response.json()
+        : rejectWithValue({
+            status: response.status,
+            errors: await response.json(),
+          })
     )
     .catch((error) => rejectWithValue({ status: error.status, statusText: error.message }))
 );
@@ -12,7 +17,12 @@ export const getArticles = createAsyncThunk('articles/getAll', async ({ limit, o
 export const getSingleArticle = createAsyncThunk('articles/getSingle', async (slug, { rejectWithValue }) =>
   fetch(`https://blog.kata.academy/api/articles/${slug}`)
     .then(async (response) =>
-      response.ok ? response.json() : rejectWithValue({ status: response.status, statusText: response.json() })
+      response.ok
+        ? response.json()
+        : rejectWithValue({
+            status: response.status,
+            errors: await response.json(),
+          })
     )
     .catch((error) => rejectWithValue({ status: error.status, statusText: error.message }))
 );
